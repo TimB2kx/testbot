@@ -9,7 +9,7 @@ interface N8nResponse {
   [key: string]: unknown
 }
 
-const N8N_WEBHOOK_URL = 'https://n8ntb.sts.support/webhook/testbot'
+const N8N_WEBHOOK_URL = 'https://n8ntb.sts.support/webhook/frau_sonnenschein'
 
 export const onRequestPost: PagesFunction = async (context) => {
   try {

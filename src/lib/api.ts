@@ -37,7 +37,7 @@ export async function sendMessage(sessionId: string, message: string): Promise<s
 }
 
 export function getOrCreateSessionId(): string {
-  const storageKey = 'testbot-session-id'
+  const storageKey = 'frau-sonnenschein-session-id'
   let sessionId = localStorage.getItem(storageKey)
 
   if (!sessionId) {
@@ -49,5 +49,5 @@ export function getOrCreateSessionId(): string {
 }
 
 export function clearSession(): void {
-  localStorage.removeItem('testbot-session-id')
+  localStorage.removeItem('frau-sonnenschein-session-id')
 }
