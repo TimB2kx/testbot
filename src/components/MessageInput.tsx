@@ -39,30 +39,29 @@ export function MessageInput({ onSend, disabled }: MessageInputProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border-t bg-background p-4"
+      className="border-t-2 border-amber-200 bg-white/80 backdrop-blur p-4"
     >
-      <div className="flex gap-2 items-end max-w-4xl mx-auto">
+      <div className="flex gap-3 items-end max-w-4xl mx-auto">
         <textarea
           ref={textareaRef}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Schreibe eine Nachricht..."
+          placeholder="Schreibe eine Nachricht... ✏️"
           disabled={disabled}
           rows={1}
-          className="flex-1 resize-none rounded-xl border border-input bg-transparent px-4 py-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex-1 resize-none rounded-2xl border-2 border-amber-300 bg-white px-5 py-4 text-base shadow-sm placeholder:text-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:border-amber-400 disabled:cursor-not-allowed disabled:opacity-50"
         />
         <Button
           type="submit"
-          size="icon"
           disabled={disabled || !message.trim()}
-          className="h-11 w-11 rounded-xl shrink-0"
+          className="h-14 w-14 rounded-2xl shrink-0 bg-amber-500 hover:bg-amber-600 text-white shadow-md"
         >
-          <Send className="h-4 w-4" />
+          <Send className="h-6 w-6" />
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground text-center mt-2">
-        Enter zum Senden, Shift+Enter für neue Zeile
+      <p className="text-sm text-amber-600 text-center mt-3">
+        Drücke Enter zum Senden 📨
       </p>
     </form>
   )

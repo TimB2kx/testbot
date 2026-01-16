@@ -1,11 +1,15 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { MessageList } from './MessageList'
 import { MessageInput } from './MessageInput'
-import { ChatMessage, sendMessage, getOrCreateSessionId, clearSession } from '@/lib/api'
+import { ChatMessage, UserProfile, sendMessage, getOrCreateSessionId, clearSession, clearUserProfile } from '@/lib/api'
 import { Button } from '@/components/ui/button'
-import { Bot, RefreshCw, LogOut } from 'lucide-react'
+import { RefreshCw, LogOut } from 'lucide-react'
 
-export function ChatWindow() {
+interface ChatWindowProps {
+  userProfile: UserProfile
+}
+
+export function ChatWindow({ userProfile }: ChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [sessionId, setSessionId] = useState(getOrCreateSessionId)
@@ -44,51 +48,54 @@ export function ChatWindow() {
   const handleNewSession = useCallback(() => {
     clearSession()
     const newSessionId = crypto.randomUUID()
-    localStorage.setItem('testbot-session-id', newSessionId)
+    localStorage.setItem('frau-sonnenschein-session-id', newSessionId)
     setSessionId(newSessionId)
     setMessages([])
     setError(null)
   }, [])
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('testbot-authenticated')
-    localStorage.removeItem('testbot-session-id')
+    localStorage.removeItem('frau-sonnenschein-authenticated')
+    localStorage.removeItem('frau-sonnenschein-session-id')
+    clearUserProfile()
     window.location.reload()
   }, [])
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-gradient-to-b from-amber-50 to-orange-50">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="border-b-2 border-amber-200 bg-white/80 backdrop-blur shadow-sm">
         <div className="flex items-center justify-between px-4 py-3 max-w-4xl mx-auto">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <Bot className="h-5 w-5 text-primary" />
+            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 flex items-center justify-center shadow-md">
+              <span className="text-2xl">🌻</span>
             </div>
             <div>
-              <h1 className="font-semibold">STS Testbot</h1>
-              <p className="text-xs text-muted-foreground">
-                AI Assistant mit Gedächtnis
+              <h1 className="font-bold text-lg text-amber-800">Frau Sonnenschein</h1>
+              <p className="text-sm text-amber-600">
+                Deine freundliche Lernhelferin
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
-              size="sm"
+              size="lg"
               onClick={handleNewSession}
-              title="Neue Session starten"
+              title="Neue Unterhaltung"
+              className="h-12 px-4 text-amber-700 hover:bg-amber-100 hover:text-amber-800 rounded-xl"
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Neu
+              <RefreshCw className="h-5 w-5 mr-2" />
+              <span className="hidden sm:inline">Neu</span>
             </Button>
             <Button
               variant="ghost"
-              size="sm"
+              size="lg"
               onClick={handleLogout}
               title="Abmelden"
+              className="h-12 px-4 text-amber-700 hover:bg-amber-100 hover:text-amber-800 rounded-xl"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-5 w-5" />
             </Button>
           </div>
         </div>
@@ -96,15 +103,15 @@ export function ChatWindow() {
 
       {/* Error banner */}
       {error && (
-        <div className="bg-destructive/10 border-b border-destructive/20 px-4 py-2">
-          <p className="text-sm text-destructive text-center max-w-4xl mx-auto">
-            {error}
+        <div className="bg-red-100 border-b-2 border-red-200 px-4 py-3">
+          <p className="text-sm text-red-700 text-center max-w-4xl mx-auto font-medium">
+            😕 {error}
           </p>
         </div>
       )}
 
       {/* Messages */}
-      <MessageList messages={messages} isLoading={isLoading} />
+      <MessageList messages={messages} isLoading={isLoading} userProfile={userProfile} />
 
       {/* Input */}
       <MessageInput onSend={handleSend} disabled={isLoading} />

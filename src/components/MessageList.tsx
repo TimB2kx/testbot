@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
-import { ChatMessage } from '@/lib/api'
-import { Bot, User } from 'lucide-react'
+import { ChatMessage, UserProfile } from '@/lib/api'
 
 interface MessageListProps {
   messages: ChatMessage[]
   isLoading?: boolean
+  userProfile: UserProfile
 }
 
-export function MessageList({ messages, isLoading }: MessageListProps) {
+export function MessageList({ messages, isLoading, userProfile }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -17,11 +17,15 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
 
   if (messages.length === 0 && !isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground">
-        <div className="text-center space-y-2">
-          <Bot className="h-12 w-12 mx-auto opacity-50" />
-          <p>Starte eine Unterhaltung!</p>
-          <p className="text-sm">Der Bot erinnert sich an den Kontext.</p>
+      <div className="flex-1 flex items-center justify-center text-amber-700">
+        <div className="text-center space-y-4 p-8">
+          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 flex items-center justify-center shadow-lg">
+            <span className="text-4xl">🌻</span>
+          </div>
+          <p className="text-xl font-medium">Hallo {userProfile.name}! 👋</p>
+          <p className="text-lg text-amber-600">
+            Schreib mir eine Nachricht und ich helfe dir gerne!
+          </p>
         </div>
       </div>
     )
@@ -37,52 +41,75 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
             message.role === 'user' ? 'ml-auto flex-row-reverse' : ''
           )}
         >
+          {/* Avatar */}
           <div
             className={cn(
-              'flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center',
+              'flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-2xl shadow-md',
               message.role === 'user'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted'
+                ? userProfile.gender === 'female'
+                  ? 'bg-gradient-to-br from-pink-200 to-pink-300'
+                  : 'bg-gradient-to-br from-blue-200 to-blue-300'
+                : 'bg-gradient-to-br from-yellow-300 to-orange-400'
             )}
           >
             {message.role === 'user' ? (
-              <User className="h-4 w-4" />
+              userProfile.gender === 'female' ? '👧' : '👦'
             ) : (
-              <Bot className="h-4 w-4" />
+              '🌻'
             )}
           </div>
-          <div
-            className={cn(
-              'rounded-2xl px-4 py-2 text-sm',
-              message.role === 'user'
-                ? 'bg-primary text-primary-foreground rounded-tr-sm'
-                : 'bg-muted rounded-tl-sm'
-            )}
-          >
-            <p className="whitespace-pre-wrap">{message.content}</p>
-            <time className={cn(
-              'text-xs mt-1 block',
-              message.role === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground'
+
+          {/* Message bubble */}
+          <div className="flex flex-col gap-1">
+            {/* Name label */}
+            <span className={cn(
+              'text-xs font-medium px-1',
+              message.role === 'user' ? 'text-right text-amber-600' : 'text-amber-700'
             )}>
-              {message.timestamp.toLocaleTimeString('de-DE', {
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </time>
+              {message.role === 'user' ? userProfile.name : 'Frau Sonnenschein'}
+            </span>
+
+            <div
+              className={cn(
+                'rounded-2xl px-4 py-3 text-base shadow-sm',
+                message.role === 'user'
+                  ? userProfile.gender === 'female'
+                    ? 'bg-gradient-to-br from-pink-400 to-pink-500 text-white rounded-tr-sm'
+                    : 'bg-gradient-to-br from-blue-400 to-blue-500 text-white rounded-tr-sm'
+                  : 'bg-white border-2 border-amber-200 text-amber-900 rounded-tl-sm'
+              )}
+            >
+              <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+              <time className={cn(
+                'text-xs mt-2 block opacity-70',
+                message.role === 'user' ? 'text-white' : 'text-amber-600'
+              )}>
+                {message.timestamp.toLocaleTimeString('de-DE', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </time>
+            </div>
           </div>
         </div>
       ))}
 
+      {/* Loading indicator */}
       {isLoading && (
         <div className="flex gap-3 max-w-[85%]">
-          <div className="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center bg-muted">
-            <Bot className="h-4 w-4" />
+          <div className="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-300 to-orange-400 text-2xl shadow-md">
+            🌻
           </div>
-          <div className="rounded-2xl rounded-tl-sm px-4 py-3 bg-muted">
-            <div className="flex gap-1">
-              <span className="w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-2 h-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium px-1 text-amber-700">
+              Frau Sonnenschein
+            </span>
+            <div className="rounded-2xl rounded-tl-sm px-4 py-4 bg-white border-2 border-amber-200 shadow-sm">
+              <div className="flex gap-1.5">
+                <span className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
             </div>
           </div>
         </div>

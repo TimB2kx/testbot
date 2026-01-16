@@ -51,3 +51,29 @@ export function getOrCreateSessionId(): string {
 export function clearSession(): void {
   localStorage.removeItem('frau-sonnenschein-session-id')
 }
+
+// User Profile
+export interface UserProfile {
+  name: string
+  gender: 'male' | 'female'
+}
+
+const PROFILE_STORAGE_KEY = 'frau-sonnenschein-profile'
+
+export function getUserProfile(): UserProfile | null {
+  const stored = localStorage.getItem(PROFILE_STORAGE_KEY)
+  if (!stored) return null
+  try {
+    return JSON.parse(stored) as UserProfile
+  } catch {
+    return null
+  }
+}
+
+export function saveUserProfile(profile: UserProfile): void {
+  localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile))
+}
+
+export function clearUserProfile(): void {
+  localStorage.removeItem(PROFILE_STORAGE_KEY)
+}
